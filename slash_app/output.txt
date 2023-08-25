@@ -1,0 +1,44 @@
+NO Trailing slash to Slash:
+  127.0.0.1 - - [24/Aug/2023 16:33:16] "GET /api/slash HTTP/1.1" 308 - Permanent Redirect
+  127.0.0.1 - - [24/Aug/2023 16:33:16] "GET /api/slash/ HTTP/1.1" 200 -
+
+NO Trailing slash to No Slash:
+  127.0.0.1 - - [24/Aug/2023 16:34:57] "GET /api/no_slash HTTP/1.1" 200 -
+
+Trailing Slash to No Slash:
+  127.0.0.1 - - [24/Aug/2023 16:35:53] "GET /api/no_slash/ HTTP/1.1" 500 -
+
+Trailing Slash to Trailing Slash:
+  127.0.0.1 - - [24/Aug/2023 16:37:16] "GET /api/slash/ HTTP/1.1" 200 -
+
+
+
+sending a localhost:5000/slash FROM URL Bar:
+  127.0.0.1 - - [24/Aug/2023 16:58:14] "GET /slash HTTP/1.1" 500 -
+
+
+
+Flask Slash Settings:
+
+app.url_map.strict_slashes = False
+
+@app.route('/users', strict_slashes=False)
+@app.route('/users/<path:path>')
+def users(path=None):
+    return str(path)
+
+c = app.test_client()
+print(c.get('/users'))  # 200 OK
+print(c.get('/users/'))  # 200 OK
+print(c.get('/users/test'))  # 200 OK
+
+However, you should avoid disabling strict slashes in most cases. The docs explain why:
+
+This behavior allows relative URLs to continue working even if the trailing slash is omitted, consistent with how Apache and other servers work. Also, the URLs will stay unique, which helps search engines avoid indexing the same page twice.
+
+const recursiveChastizing = (startingNum) => {
+  if (startingNum === 1000) return;
+
+  console.log("I solemnly swear not to boink my students");
+  recursiveChastizing(++startingNum);
+}
